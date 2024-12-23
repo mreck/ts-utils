@@ -6,4 +6,4 @@ Simply a collection of TypeScript utils.
 
 - [x] Add tests for tree.ts
 - [x] Add pre-commit hooks
-- [ ] Add tree serialize function
+- [x] Add tree serialize and deserialize functions

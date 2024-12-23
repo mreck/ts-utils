@@ -1,6 +1,12 @@
 import { ExtUniqueMap } from "./map";
 
-export class TreeNode<K, T> {
+export interface TreeNodeObject<K extends number | string, T> {
+  readonly key: K;
+  data: T;
+  children: TreeNodeObject<K, T>[];
+}
+
+export class TreeNode<K extends number | string, T> {
   constructor(
     public readonly key: K,
     public data: T,
@@ -8,6 +14,31 @@ export class TreeNode<K, T> {
     public children: TreeNode<K, T>[] = [],
     public tree: Tree<K, T> | null = null,
   ) {}
+
+  toObject(): TreeNodeObject<K, T> {
+    return {
+      key: this.key,
+      data: this.data,
+      children: this.children.map((child) => child.toObject()),
+    };
+  }
+
+  private static fromObjectImpl<K extends number | string, T>(
+    root: TreeNodeObject<K, T>,
+    parent: TreeNode<K, T> | null,
+  ): TreeNode<K, T> {
+    const result = new TreeNode(root.key, root.data, parent, []);
+    result.children = root.children.map((node) =>
+      TreeNode.fromObjectImpl(node, result),
+    );
+    return result;
+  }
+
+  static fromObject<K extends number | string, T>(
+    root: TreeNodeObject<K, T>,
+  ): TreeNode<K, T> {
+    return TreeNode.fromObjectImpl(root, null);
+  }
 
   get firstChild(): TreeNode<K, T> | null {
     return this.children.length === 0 ? null : this.children[0];
@@ -45,10 +76,13 @@ export class TreeNode<K, T> {
       return null;
     }
 
-    const node = this.children[idx];
+    const removedNode = this.children[idx];
     this.children.splice(idx, 1);
-    this.tree?.keyMap.delete(key);
-    return node;
+    if (this.tree) {
+      removedNode.traverse((node) => this.tree?.keyMap.delete(node.key));
+    }
+
+    return removedNode;
   }
 
   traverse(fn: (node: TreeNode<K, T>) => void) {
@@ -84,7 +118,7 @@ export class TreeNode<K, T> {
   }
 }
 
-export class Tree<K, T> {
+export class Tree<K extends number | string, T> {
   public keyMap = new ExtUniqueMap<K, TreeNode<K, T>>();
 
   constructor(public root: TreeNode<K, T>) {

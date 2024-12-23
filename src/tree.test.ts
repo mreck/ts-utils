@@ -8,6 +8,54 @@ const createTestTreeNodes = () => {
 };
 
 describe("TreeNode", () => {
+  test("toObject()", () => {
+    const r = createTestTreeNodes();
+    const o = r.toObject();
+
+    expect(o).toEqual({
+      key: 1,
+      data: 1,
+      children: [
+        {
+          key: 2,
+          data: 2,
+          children: [],
+        },
+        {
+          key: 3,
+          data: 3,
+          children: [
+            {
+              key: 4,
+              data: 4,
+              children: [
+                {
+                  key: 5,
+                  data: 5,
+                  children: [],
+                },
+              ],
+            },
+          ],
+        },
+      ],
+    });
+  });
+
+  test("fromObject()", () => {
+    const r1 = createTestTreeNodes();
+    const o = r1.toObject();
+    const r2 = TreeNode.fromObject(o);
+
+    const d1 = [];
+    const d2 = [];
+
+    r1.traverse((node) => d1.push([node.key, node.data, node.parent?.key]));
+    r2.traverse((node) => d2.push([node.key, node.data, node.parent?.key]));
+
+    expect(d1).toEqual(d2);
+  });
+
   test("firstChild()", () => {
     const r = createTestTreeNodes();
 
@@ -67,18 +115,24 @@ describe("TreeNode", () => {
 
   test("find()", () => {
     const r = createTestTreeNodes();
-    const n = r.find((node) => node.key === 5);
+    const n1 = r.find((node) => node.key === 5);
 
-    expect(n.key).toBe(5);
-    expect(n.data).toBe(5);
+    expect(n1.key).toBe(5);
+    expect(n1.data).toBe(5);
+
+    const n2 = r.find((node) => node.key === 99);
+    expect(n2).toBe(null);
   });
 
   test("findUp()", () => {
     const r = createTestTreeNodes().lastChild.lastChild.lastChild;
-    const n = r.findUp((node) => node.key === 1);
+    const n1 = r.findUp((node) => node.key === 1);
 
-    expect(n.key).toBe(1);
-    expect(n.data).toBe(1);
+    expect(n1.key).toBe(1);
+    expect(n1.data).toBe(1);
+
+    const n2 = r.findUp((node) => node.key === 99);
+    expect(n2).toBe(null);
   });
 });
 
@@ -93,5 +147,9 @@ describe("TreeNode", () => {
     t.root.addChildNode(new TreeNode(8, 8)).addChildNode(new TreeNode(9, 9));
 
     expect(t.keyMap.getKeys().sort()).toEqual([1, 2, 3, 4, 5, 6, 7, 8, 9]);
+
+    t.root.removeChild(8);
+
+    expect(t.keyMap.getKeys().sort()).toEqual([1, 2, 3, 4, 5, 6, 7]);
   });
 });
