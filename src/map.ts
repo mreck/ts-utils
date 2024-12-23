@@ -7,6 +7,14 @@ export class ExtMap<K, V> extends Map<K, V> {
     return Array.from(this.values());
   }
 
+  getKeysAndValues(): [K, V][] {
+    const result: [K, V][] = [];
+    for (const data of this) {
+      result.push(data);
+    }
+    return result;
+  }
+
   setMany(entires: readonly (readonly [K, V])[]): this {
     for (const [key, val] of entires) {
       this.set(key, val);
@@ -18,12 +26,19 @@ export class ExtMap<K, V> extends Map<K, V> {
     this.set(key, fn(this.get(key)));
     return this;
   }
+
+  updateAll(fn: (val: V | undefined) => V): this {
+    for (const [key, val] of this) {
+      this.set(key, fn(val));
+    }
+    return this;
+  }
 }
 
 export class ExtUniqueMap<K, V> extends ExtMap<K, V> {
   set(key: K, val: V): this {
     if (this.get(key) !== undefined) {
-      console.error(`unique contraint violated! key=${key}`);
+      console.error(`unique contraint violated! key: ${key}`);
     }
     return super.set(key, val);
   }
