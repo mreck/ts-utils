@@ -46,6 +46,25 @@ export class TreeNode<K, T> {
     fn(this);
     this.parent?.traverse(fn);
   }
+
+  find(fn: (node: TreeNode<K, T>) => boolean): TreeNode<K, T> | null {
+    if (fn(this)) {
+      return this;
+    }
+    for (const child of this.children) {
+      if (child.find(fn)) {
+        return child;
+      }
+    }
+    return null;
+  }
+
+  findUp(fn: (node: TreeNode<K, T>) => boolean): TreeNode<K, T> | null {
+    if (fn(this)) {
+      return this;
+    }
+    return this.parent?.findUp(fn) || null;
+  }
 }
 
 export class Tree<K, T> {
