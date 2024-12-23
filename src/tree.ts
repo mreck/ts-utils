@@ -9,17 +9,33 @@ export class TreeNode<K, T> {
     public tree: Tree<K, T> | null = null,
   ) {}
 
+  get firstChild(): TreeNode<K, T> | null {
+    return this.children.length === 0 ? null : this.children[0];
+  }
+
+  get lastChild(): TreeNode<K, T> | null {
+    return this.children.length === 0
+      ? null
+      : this.children[this.children.length - 1];
+  }
+
   addChildNode(node: TreeNode<K, T>): TreeNode<K, T> {
     node.parent = this;
+    node.tree = this.tree;
+
     this.children.push(node);
-    this.tree?.keys.set(node.key, node);
+    this.tree?.keyMap.set(node.key, node);
+
     return node;
   }
 
   addChild(key: K, data: T, children: TreeNode<K, T>[] = []): TreeNode<K, T> {
     const node = new TreeNode<K, T>(key, data, this, children);
+    node.tree = this.tree;
+
     this.children.push(node);
-    this.tree?.keys.set(node.key, node);
+    this.tree?.keyMap.set(node.key, node);
+
     return node;
   }
 
@@ -31,7 +47,7 @@ export class TreeNode<K, T> {
 
     const node = this.children[idx];
     this.children.splice(idx, 1);
-    this.tree?.keys.delete(key);
+    this.tree?.keyMap.delete(key);
     return node;
   }
 
@@ -44,7 +60,7 @@ export class TreeNode<K, T> {
 
   traverseUp(fn: (node: TreeNode<K, T>) => void) {
     fn(this);
-    this.parent?.traverse(fn);
+    this.parent?.traverseUp(fn);
   }
 
   find(fn: (node: TreeNode<K, T>) => boolean): TreeNode<K, T> | null {
@@ -52,8 +68,9 @@ export class TreeNode<K, T> {
       return this;
     }
     for (const child of this.children) {
-      if (child.find(fn)) {
-        return child;
+      const res = child.find(fn);
+      if (res) {
+        return res;
       }
     }
     return null;
@@ -68,9 +85,12 @@ export class TreeNode<K, T> {
 }
 
 export class Tree<K, T> {
-  public keys = new ExtUniqueMap<K, TreeNode<K, T>>();
+  public keyMap = new ExtUniqueMap<K, TreeNode<K, T>>();
 
   constructor(public root: TreeNode<K, T>) {
-    this.keys.set(root.key, root);
+    this.root.traverse((node) => {
+      node.tree = this;
+      this.keyMap.set(node.key, node);
+    });
   }
 }

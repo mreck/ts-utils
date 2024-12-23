@@ -4,5 +4,6 @@ Simply a collection of TypeScript utils.
 
 ## TODO
 
-- [ ] Add tests for tree.ts
+- [x] Add tests for tree.ts
 - [x] Add pre-commit hooks
+- [ ] Add tree serialize function
