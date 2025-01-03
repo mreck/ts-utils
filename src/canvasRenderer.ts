@@ -11,21 +11,25 @@ export interface Size {
 export interface Rect extends Position, Size {}
 
 export class ImageCache {
-  public imgs: Map<string, HTMLImageElement>;
+  public cache: Map<string, HTMLImageElement>;
 
   get(src: string): HTMLImageElement | null {
-    let img = this.imgs.get(src);
+    let img = this.cache.get(src);
     if (img) {
       return img.complete ? img : null;
     }
     img = document.createElement("img");
     img.src = src;
-    this.imgs.set(src, img);
+    this.cache.set(src, img);
     return null;
   }
 
-  remove(src: string) {
-    this.imgs.delete(src);
+  remove(src: string): void {
+    this.cache.delete(src);
+  }
+
+  clear(): void {
+    this.cache.clear();
   }
 }
 
@@ -49,11 +53,27 @@ export class CanvasRenderer {
     } else {
       throw new Error("invalid argument");
     }
+
+    this.c.imageSmoothingQuality = "high";
+  }
+
+  getCanvasSize(): Size {
+    return {
+      w: this.c.canvas.width,
+      h: this.c.canvas.height,
+    };
   }
 
   drawRect(rect: Rect, style: string): this {
     this.c.fillStyle = style;
     this.c.fillRect(rect.x, rect.y, rect.w, rect.h);
+    return this;
+  }
+
+  strokeRect(rect: Rect, lineWidth: number, style: string): this {
+    this.c.lineWidth = lineWidth;
+    this.c.strokeStyle = style;
+    this.c.strokeRect(rect.x, rect.y, rect.w, rect.h);
     return this;
   }
 
