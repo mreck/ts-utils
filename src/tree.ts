@@ -28,15 +28,11 @@ export class TreeNode<K extends number | string, T> {
     parent: TreeNode<K, T> | null,
   ): TreeNode<K, T> {
     const result = new TreeNode(root.key, root.data, parent, []);
-    result.children = root.children.map((node) =>
-      TreeNode.fromObjectImpl(node, result),
-    );
+    result.children = root.children.map((node) => TreeNode.fromObjectImpl(node, result));
     return result;
   }
 
-  static fromObject<K extends number | string, T>(
-    root: TreeNodeObject<K, T>,
-  ): TreeNode<K, T> {
+  static fromObject<K extends number | string, T>(root: TreeNodeObject<K, T>): TreeNode<K, T> {
     return TreeNode.fromObjectImpl(root, null);
   }
 
@@ -45,9 +41,7 @@ export class TreeNode<K extends number | string, T> {
   }
 
   get lastChild(): TreeNode<K, T> | null {
-    return this.children.length === 0
-      ? null
-      : this.children[this.children.length - 1];
+    return this.children.length === 0 ? null : this.children[this.children.length - 1];
   }
 
   addChildNode(node: TreeNode<K, T>): TreeNode<K, T> {

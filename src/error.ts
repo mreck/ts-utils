@@ -1,6 +1,4 @@
-export const ErrUnknownCoercionFailed = new Error(
-  "unknown Error: coercing failed",
-);
+export const ErrUnknownCoercionFailed = new Error("unknown Error: coercing failed");
 
 export function coerceError(val: unknown): Error {
   if (val instanceof Error) {
@@ -11,11 +9,7 @@ export function coerceError(val: unknown): Error {
     return new Error(val);
   }
 
-  if (
-    typeof val === "object" &&
-    "message" in val &&
-    typeof val.message === "string"
-  ) {
+  if (typeof val === "object" && "message" in val && typeof val.message === "string") {
     const err = new Error(val.message);
 
     if ("name" in val && typeof val.name === "string") {

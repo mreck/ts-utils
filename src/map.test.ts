@@ -78,9 +78,7 @@ describe("ExtMap", () => {
 
 describe("ExtUniqueMap", () => {
   test("set()", () => {
-    const consoleSpy = jest
-      .spyOn(console, "error")
-      .mockImplementation(() => {}); // eslint-disable-line @typescript-eslint/no-empty-function
+    const consoleSpy = jest.spyOn(console, "error").mockImplementation(() => {}); // eslint-disable-line @typescript-eslint/no-empty-function
 
     const m = new ExtUniqueMap<number, number>();
 
