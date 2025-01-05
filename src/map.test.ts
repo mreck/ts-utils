@@ -50,9 +50,9 @@ describe("ExtMap", () => {
 
     m.set(1, 2).set(3, 4).set(5, 6);
 
-    m.update(1, (v) => v * v);
-    m.update(3, (v) => v * v);
-    m.update(5, (v) => v * v);
+    m.update(1, (v) => (v ? v * v : 0));
+    m.update(3, (v) => (v ? v * v : 0));
+    m.update(5, (v) => (v ? v * v : 0));
 
     expect(m.getKeysAndValues().sort((a, b) => a[0] - b[0])).toEqual([
       [1, 2 * 2],
@@ -66,7 +66,7 @@ describe("ExtMap", () => {
 
     m.set(1, 2).set(3, 4).set(5, 6);
 
-    m.updateAll((v) => v * v);
+    m.updateAll((v) => (v ? v * v : 0));
 
     expect(m.getKeysAndValues().sort((a, b) => a[0] - b[0])).toEqual([
       [1, 2 * 2],

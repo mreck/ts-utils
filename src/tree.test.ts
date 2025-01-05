@@ -47,8 +47,8 @@ describe("TreeNode", () => {
     const o = r1.toObject();
     const r2 = TreeNode.fromObject(o);
 
-    const d1 = [];
-    const d2 = [];
+    const d1: [number, number, number | undefined][] = [];
+    const d2: [number, number, number | undefined][] = [];
 
     r1.traverse((node) => d1.push([node.key, node.data, node.parent?.key]));
     r2.traverse((node) => d2.push([node.key, node.data, node.parent?.key]));
@@ -60,14 +60,18 @@ describe("TreeNode", () => {
     const r = createTestTreeNodes();
 
     expect(r.firstChild).toBe(r.children[0]);
-    expect(r.firstChild.firstChild).toBe(null);
+
+    expect(r.firstChild).toBeInstanceOf(TreeNode);
+    expect(r.firstChild?.firstChild).toBe(null);
   });
 
   test("lastChild()", () => {
     const r = createTestTreeNodes();
 
     expect(r.lastChild).toBe(r.children[1]);
-    expect(r.firstChild.lastChild).toBe(null);
+
+    expect(r.firstChild).toBeInstanceOf(TreeNode);
+    expect(r.firstChild?.lastChild).toBe(null);
   });
 
   test("addChildNode()", () => {
@@ -76,16 +80,21 @@ describe("TreeNode", () => {
     r.addChildNode(n);
 
     expect(r.lastChild).toBe(n);
-    expect(r.lastChild.parent.key).toBe(r.key);
+
+    expect(r.lastChild?.parent).toBeInstanceOf(TreeNode);
+    expect(r.lastChild?.parent?.key).toBe(r.key);
   });
 
   test("addChild()", () => {
     const r = createTestTreeNodes();
     r.addChild(6, 7);
 
-    expect(r.lastChild.key).toBe(6);
-    expect(r.lastChild.data).toBe(7);
-    expect(r.lastChild.parent.key).toBe(r.key);
+    expect(r.lastChild).toBeInstanceOf(TreeNode);
+    expect(r.lastChild?.key).toBe(6);
+    expect(r.lastChild?.data).toBe(7);
+
+    expect(r.lastChild?.parent).toBeInstanceOf(TreeNode);
+    expect(r.lastChild?.parent?.key).toBe(r.key);
   });
 
   test("removeChild()", () => {
@@ -94,21 +103,23 @@ describe("TreeNode", () => {
     r.removeChild(2);
 
     expect(r.children.length).toBe(1);
-    expect(r.firstChild.key).toBe(3);
+
+    expect(r.firstChild).toBeInstanceOf(TreeNode);
+    expect(r.firstChild?.key).toBe(3);
   });
 
   test("traverse()", () => {
     const r = createTestTreeNodes();
-    const k = [];
+    const k: number[] = [];
     r.traverse((node) => k.push(node.key));
 
     expect(k).toEqual([1, 2, 3, 4, 5]);
   });
 
   test("traverseUp()", () => {
-    const r = createTestTreeNodes().lastChild.lastChild.lastChild;
-    const k = [];
-    r.traverseUp((node) => k.push(node.key));
+    const r = createTestTreeNodes().lastChild?.lastChild?.lastChild;
+    const k: number[] = [];
+    r?.traverseUp((node) => k.push(node.key));
 
     expect(k).toEqual([5, 4, 3, 1]);
   });
@@ -117,21 +128,23 @@ describe("TreeNode", () => {
     const r = createTestTreeNodes();
     const n1 = r.find((node) => node.key === 5);
 
-    expect(n1.key).toBe(5);
-    expect(n1.data).toBe(5);
+    expect(n1).toBeInstanceOf(TreeNode);
+    expect(n1?.key).toBe(5);
+    expect(n1?.data).toBe(5);
 
     const n2 = r.find((node) => node.key === 99);
     expect(n2).toBe(null);
   });
 
   test("findUp()", () => {
-    const r = createTestTreeNodes().lastChild.lastChild.lastChild;
-    const n1 = r.findUp((node) => node.key === 1);
+    const r = createTestTreeNodes().lastChild?.lastChild?.lastChild;
+    const n1 = r?.findUp((node) => node.key === 1);
 
-    expect(n1.key).toBe(1);
-    expect(n1.data).toBe(1);
+    expect(n1).toBeInstanceOf(TreeNode);
+    expect(n1?.key).toBe(1);
+    expect(n1?.data).toBe(1);
 
-    const n2 = r.findUp((node) => node.key === 99);
+    const n2 = r?.findUp((node) => node.key === 99);
     expect(n2).toBe(null);
   });
 });
