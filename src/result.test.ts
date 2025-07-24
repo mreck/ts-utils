@@ -26,12 +26,39 @@ describe("result", () => {
     expect(() => unwrapResult(e)).toThrow("e");
   });
 
-  test("catchAsyncResult", async () => {
-    expect(await catchAsyncResult(() => "s")).toEqual(s);
-    expect(
-      await catchAsyncResult(() => {
-        throw "e";
-      }),
-    ).toEqual(e);
+  describe("catchAsyncResult", () => {
+    let sfn = 0;
+    let efn = 0;
+    const sf = () => {
+      ++sfn;
+      return "s";
+    };
+    const ef = () => {
+      ++efn;
+      throw "e";
+    };
+
+    test("without reties", async () => {
+      sfn = 0;
+      efn = 0;
+
+      expect(await catchAsyncResult(sf)).toEqual(s);
+      expect(sfn).toEqual(1);
+
+      expect(await catchAsyncResult(ef)).toEqual(e);
+      expect(efn).toEqual(1);
+    });
+
+    test("with reties", async () => {
+      sfn = 0;
+      efn = 0;
+      const opts = { retries: 3 };
+
+      expect(await catchAsyncResult(sf, opts)).toEqual(s);
+      expect(sfn).toEqual(1);
+
+      expect(await catchAsyncResult(ef, opts)).toEqual(e);
+      expect(efn).toEqual(4);
+    });
   });
 });

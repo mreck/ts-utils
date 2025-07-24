@@ -41,11 +41,21 @@ export function coerceResultError(value: unknown): ResultError {
   return newResultError(coerceError(value));
 }
 
-export async function catchAsyncResult<T>(fn: () => T): AsyncResult<T> {
-  try {
-    const d = await fn();
-    return newResultSuccess(d);
-  } catch (error) {
-    return coerceResultError(error);
+export async function catchAsyncResult<T>(
+  fn: () => T,
+  opts?: { retries?: number },
+): AsyncResult<T> {
+  const retries = Math.max(0, opts?.retries ?? 0);
+  let result: Result<T> = coerceResultError("out of retries");
+
+  for (let i = 0; i <= retries; i++) {
+    try {
+      result = newResultSuccess(await fn());
+      break;
+    } catch (error) {
+      result = coerceResultError(error);
+    }
   }
+
+  return result;
 }
