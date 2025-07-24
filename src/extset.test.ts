@@ -1,4 +1,4 @@
-import { ExtSet } from "./set";
+import { ExtSet } from "./extset";
 
 test("getValues()", () => {
   const s = new ExtSet<number>();

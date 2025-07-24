@@ -1,4 +1,4 @@
-import { ExtUniqueMap } from "./map";
+import { ExtUniqueMap } from "./extmap";
 
 export interface TreeNodeObject<K extends number | string, T> {
   readonly key: K;
