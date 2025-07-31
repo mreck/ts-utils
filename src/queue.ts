@@ -1,7 +1,15 @@
-export class Queue<T> {
+export interface Queue<T> {
+  enqueue: (item: T | T[]) => Promise<void>;
+  dequeue: () => Promise<T | null>;
+  peek: () => Promise<T | null>;
+  size: () => Promise<number>;
+  isEmpty: () => Promise<boolean>;
+}
+
+export class SimpleQueue<T> implements Queue<T> {
   private items: T[] = [];
 
-  enqueue(item: T | T[]) {
+  async enqueue(item: T | T[]) {
     if (Array.isArray(item)) {
       this.items.push(...item);
     } else {
@@ -9,45 +17,47 @@ export class Queue<T> {
     }
   }
 
-  dequeue(): T | null {
+  async dequeue() {
     return this.items.shift() || null;
   }
 
-  peek(): T | null {
-    if (this.isEmpty) {
+  async peek() {
+    if (this.items.length === 0) {
       return null;
     } else {
       return this.items[0];
     }
   }
 
-  get size(): number {
+  async size() {
     return this.items.length;
   }
 
-  get isEmpty(): boolean {
+  async isEmpty() {
     return this.items.length === 0;
   }
 }
 
 export class AutomaticQueue<T> {
-  private queue = new Queue<T>();
   private mutex = false;
   private resolveEmpty: ((value: void | PromiseLike<void>) => void)[] = [];
 
-  constructor(private readonly handler: (item: T) => Promise<void>) {}
+  constructor(
+    private readonly handler: (item: T) => Promise<void>,
+    private readonly queue: Queue<T> = new SimpleQueue(),
+  ) {}
 
-  enqueue(item: T | T[]) {
+  async enqueue(item: T | T[]) {
     this.queue.enqueue(item);
     this.handle();
   }
 
-  get isEmpty(): boolean {
-    return this.queue.isEmpty;
+  async isEmpty() {
+    return this.queue.isEmpty();
   }
 
   async onEmpty(): Promise<void> {
-    if (!this.queue.isEmpty) {
+    if (!(await this.isEmpty())) {
       return new Promise((resolve) => {
         this.resolveEmpty.push(resolve);
       });
@@ -63,7 +73,7 @@ export class AutomaticQueue<T> {
 
     let item: null | T = null;
     do {
-      item = this.queue.dequeue();
+      item = await this.queue.dequeue();
       if (item !== null) {
         await this.handler(item);
       }
