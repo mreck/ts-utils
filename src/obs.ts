@@ -1,7 +1,12 @@
 export class Obs<T> {
   private cbs: ((newValue: T, oldValue: T, obs: this) => void)[] = [];
 
-  constructor(private value: T) {}
+  constructor(
+    private value: T,
+    private transform?: (value: T) => T,
+  ) {
+    if (transform) this.value = transform(this.value);
+  }
 
   get(): T {
     return this.value;
@@ -9,14 +14,15 @@ export class Obs<T> {
 
   set(newValue: T): this {
     const oldValue = this.value;
-    this.value = newValue;
+    this.value = this.transform?.(newValue) ?? newValue;
     this.notifty(this.value, oldValue);
     return this;
   }
 
   update(fn: (oldValue: T) => T): this {
     const oldValue = this.value;
-    this.value = fn(oldValue);
+    const newValue = fn(oldValue);
+    this.value = this.transform?.(newValue) ?? newValue;
     this.notifty(this.value, oldValue);
     return this;
   }
