@@ -20,11 +20,7 @@ export class Obs<T> {
   }
 
   update(fn: (oldValue: T) => T): this {
-    const oldValue = this.value;
-    const newValue = fn(oldValue);
-    this.value = this.transform?.(newValue) ?? newValue;
-    this.notifty(this.value, oldValue);
-    return this;
+    return this.set(fn(this.value));
   }
 
   up = this.update;
