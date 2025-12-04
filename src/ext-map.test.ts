@@ -1,4 +1,4 @@
-import { ExtArrayMap, ExtMap, ExtUniqueMap } from "./extmap";
+import { ExtArrayMap, ExtMap, ExtUniqueMap } from "./ext-map";
 
 describe("ExtMap", () => {
   test("getKeys()", () => {

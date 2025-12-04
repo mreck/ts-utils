@@ -1,4 +1,4 @@
-import { ExtSet } from "./extset";
+import { ExtSet } from "./ext-set";
 
 const expectExtSetValues = <T>(s: ExtSet<T>, values: T[]) =>
   expect(s.getValues().sort()).toEqual(values);
