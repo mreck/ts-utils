@@ -3,6 +3,14 @@ import { ExtSet } from "./ext-set";
 const expectExtSetValues = <T>(s: ExtSet<T>, values: T[]) =>
   expect(s.getValues().sort()).toEqual(values);
 
+test("clone()", () => {
+  const s1 = new ExtSet<number>([1, 2, 3]);
+  const s2 = s1.clone();
+
+  expect(s1).not.toBe(s2);
+  expect(s1.getValues().sort()).toEqual(s2.getValues().sort());
+});
+
 test("toggle()", () => {
   const s = new ExtSet<number>([1, 2, 3]);
 

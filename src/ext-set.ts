@@ -1,4 +1,8 @@
 export class ExtSet<T> extends Set<T> {
+  clone(): ExtSet<T> {
+    return new ExtSet(this);
+  }
+
   toggle(value: T): this {
     if (this.has(value)) {
       this.delete(value);
