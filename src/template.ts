@@ -1,16 +1,9 @@
-export function querySelectTemplate(query: string): HTMLTemplateElement | null {
-  // @TODO: allow for custom parent
-
-  const el = document.querySelector(query);
-  if (el === null || !(el instanceof HTMLTemplateElement)) {
-    return null;
-  }
-
-  return el;
-}
+import { querySelectAllHTML, querySelectHTML } from "./query-select";
 
 export type TemplateData = ({ query: string } | { queryAll: string }) & {
   attrs?: Record<string, string>;
+  innerHTML?: string;
+  innerText?: string;
 };
 
 export function appendTemplate(
@@ -21,18 +14,20 @@ export function appendTemplate(
   const root = document.importNode(template.content, true);
 
   for (const d of data) {
-    let els: Element[];
+    let els: HTMLElement[];
 
     if ("query" in d) {
-      const el = root.querySelector(d.query);
+      const el = querySelectHTML(d.query, root);
       if (el === null) {
-        return new Error(`could not find element with query: ${d.query}`);
+        return new Error(`could not find HTML element with query: ${d.query}`);
       }
       els = [el];
     } else {
-      const el = root.querySelectorAll(d.queryAll);
+      const el = querySelectAllHTML(d.queryAll, root);
       if (el === null) {
-        return new Error(`could not find element with queryAll: ${d.queryAll}`);
+        return new Error(
+          `could not find HTML element with queryAll: ${d.queryAll}`,
+        );
       }
       els = Array.from(el);
     }
@@ -40,6 +35,18 @@ export function appendTemplate(
     for (const el of els) {
       for (const attr in d.attrs) {
         el.setAttribute(attr, d.attrs[attr]);
+      }
+    }
+
+    if (d.innerHTML) {
+      for (const el of els) {
+        el.innerHTML = d.innerHTML;
+      }
+    }
+
+    if (d.innerText) {
+      for (const el of els) {
+        el.innerText = d.innerText;
       }
     }
   }

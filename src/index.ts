@@ -4,6 +4,8 @@ export * from "./ext-map";
 export * from "./ext-set";
 export * from "./misc";
 export * from "./obs";
+export * from "./query-select";
 export * from "./queue";
 export * from "./result";
+export * from "./template";
 export * from "./tree";

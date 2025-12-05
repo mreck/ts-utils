@@ -3,7 +3,8 @@
  */
 
 import { assert } from "./misc";
-import { appendTemplate, querySelectTemplate } from "./template";
+import { querySelectTemplate } from "./query-select";
+import { appendTemplate } from "./template";
 
 const html1 = `
   <div id="root"></div>
