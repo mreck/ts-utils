@@ -1,4 +1,4 @@
-import { coerceError, ErrUnknownCoercionFailed } from "./error";
+import { ErrUnknownCoercionFailed, coerceError } from "./error";
 
 const isErr = (val: unknown) => val instanceof Error;
 

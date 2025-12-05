@@ -1,4 +1,4 @@
-import { catchAsyncResult, ResultError, ResultSuccess } from "./result";
+import { ResultError, ResultSuccess, catchAsyncResult } from "./result";
 
 test("ResultError", () => {
   const e = ResultError.coerce("e");

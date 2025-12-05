@@ -1,7 +1,6 @@
 /**
  * @jest-environment jsdom
  */
-
 import { assert } from "./misc";
 import { querySelectTemplate } from "./query-select";
 import { appendTemplate } from "./template";
