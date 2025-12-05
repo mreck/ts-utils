@@ -1,0 +1,58 @@
+/**
+ * @jest-environment jsdom
+ */
+
+import { assert } from "./misc";
+import { appendTemplate, querySelectTemplate } from "./template";
+
+const html = `
+  <div id="root"></div>
+  <template id="test">
+    <div>foobar</div>
+  </template>
+` as const;
+
+describe("appendTemplate", () => {
+  test("empty data", () => {
+    document.body.innerHTML = html;
+
+    const root = assert(document.querySelector("#root"));
+    const tmpl = assert(querySelectTemplate("#test"));
+
+    const result = appendTemplate(root, tmpl, []);
+
+    expect(result).not.toBeInstanceOf(Error);
+    expect(assert(document.querySelector("#root")).innerHTML.trim()).toEqual(
+      `<div>foobar</div>`,
+    );
+  });
+
+  test("bad query", () => {
+    document.body.innerHTML = html;
+
+    const root = assert(document.querySelector("#root"));
+    const tmpl = assert(querySelectTemplate("#test"));
+
+    const result = appendTemplate(root, tmpl, [
+      { query: "img", attrs: { id: "baz" } },
+    ]);
+
+    expect(result).toBeInstanceOf(Error);
+  });
+
+  test("with attrs", () => {
+    document.body.innerHTML = html;
+
+    const root = assert(document.querySelector("#root"));
+    const tmpl = assert(querySelectTemplate("#test"));
+
+    const result = appendTemplate(root, tmpl, [
+      { query: "div", attrs: { id: "baz" } },
+    ]);
+
+    expect(result).not.toBeInstanceOf(Error);
+    expect(assert(document.querySelector("#root")).innerHTML.trim()).toEqual(
+      `<div id="baz">foobar</div>`,
+    );
+  });
+});
