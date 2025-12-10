@@ -1,11 +1,19 @@
+export interface ObsStorage<T> {
+  load(): T;
+  save(data: T): void;
+}
+
 export class Obs<T> {
   private cbs: ((newValue: T, oldValue: T, obs: this) => void)[] = [];
 
   constructor(
     private value: T,
-    private transform?: (value: T) => T,
+    private opts?: {
+      transform?: (value: T) => T;
+      storage?: ObsStorage<T>;
+    },
   ) {
-    if (transform) this.value = transform(this.value);
+    this.set(value);
   }
 
   get(): T {
@@ -14,7 +22,8 @@ export class Obs<T> {
 
   set(newValue: T): this {
     const oldValue = this.value;
-    this.value = this.transform?.(newValue) ?? newValue;
+    this.value = this.opts?.transform?.(newValue) ?? newValue;
+    this.opts?.storage?.save(this.value);
     this.notifty(this.value, oldValue);
     return this;
   }

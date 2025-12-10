@@ -27,7 +27,7 @@ test("Obs", async () => {
 
   expect(o.update((n) => n * 2).get()).toBe(8);
 
-  const ot = new Obs(2, (n) => n * n);
+  const ot = new Obs(2, { transform: (n) => n * n });
 
   expect(ot.get()).toBe(4);
   expect(ot.set(3).get()).toBe(9);
