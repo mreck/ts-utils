@@ -13,7 +13,7 @@ export class Obs<T> {
       storage?: ObsStorage<T>;
     },
   ) {
-    this.set(value);
+    this.set(this?.opts?.storage?.load() || value);
   }
 
   get(): T {
